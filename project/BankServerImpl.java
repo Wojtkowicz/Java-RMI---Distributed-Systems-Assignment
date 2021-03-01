@@ -10,8 +10,9 @@ public class BankServerImpl implements BankServer
     super(); 	// call the parent constructor
   }
 
+    private List<Account> accounts; // users accounts
   // Remote method we are implementing!
-  public String getCapital(String country) throws RemoteException
+ /* public String getCapital(String country) throws RemoteException
   {
     System.out.println("Sending return string now - country requested: " + country);
     if (country.toLowerCase().compareTo("usa") == 0)
@@ -21,7 +22,7 @@ public class BankServerImpl implements BankServer
     else if (country.toLowerCase().compareTo("france") == 0)
     return "Paris";
     return "Don't know that one!";
-  }
+  }*/
 
   // main is required because the server is standalone
   public static void main(String args[])
@@ -49,5 +50,31 @@ public class BankServerImpl implements BankServer
     {
       System.out.println("Error in main - " + exc.toString());
     }
+  }
+
+
+  @Override
+  public long login(String username, String password) throws RemoteException, InvalidLogin {
+    return 0;
+  }
+
+  @Override
+  public void deposit(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession {
+
+  }
+
+  @Override
+  public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession {
+
+  }
+
+  @Override
+  public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession {
+    return null;
+  }
+
+  @Override
+  public Statement getStatement(Date from, Date to, long sessionID) throws RemoteException, InvalidSession {
+    return null;
   }
 }
