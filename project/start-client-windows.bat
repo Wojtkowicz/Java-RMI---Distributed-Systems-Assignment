@@ -1,0 +1,2 @@
+java -cp C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.rmi.server.codebase=file:/c:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.security.policy=server-windows.policy  Client
+pause
