@@ -1,6 +1,10 @@
+import org.joda.money.Money;
+import org.joda.time.DateTime;
+
 import java.rmi.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;
+import java.util.List;
 
 public class BankServerImpl implements BankServer
 {
@@ -42,7 +46,7 @@ public class BankServerImpl implements BankServer
 
       // Put the server object into the Registry
       Registry registry = LocateRegistry.getRegistry();
-      registry.rebind("Capitals", stub);
+      registry.rebind("Bank", stub);
       System.out.println("Name rebind completed");
       System.out.println("Server ready for requests!");
     }
@@ -74,7 +78,7 @@ public class BankServerImpl implements BankServer
   }
 
   @Override
-  public Statement getStatement(Date from, Date to, long sessionID) throws RemoteException, InvalidSession {
+  public Statement getStatement(DateTime from, DateTime to, long sessionID) throws RemoteException, InvalidSession {
     return null;
   }
 }
