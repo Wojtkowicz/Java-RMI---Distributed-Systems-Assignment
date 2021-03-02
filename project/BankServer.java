@@ -11,10 +11,10 @@ public interface BankServer extends Remote
 
   public void deposit(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession;
   
-  public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession;
+  public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession, InsufficientBalance;
   
   public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession;
 
-  public Statement getStatement(DateTime from, DateTime to, long sessionID) throws RemoteException, InvalidSession;
+  public Statement getStatement(int accountnum, DateTime from, DateTime to, long sessionID) throws RemoteException, InvalidSession;
 
 }

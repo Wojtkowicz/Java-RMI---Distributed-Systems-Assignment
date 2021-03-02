@@ -49,7 +49,7 @@ public class ATMClient
 						System.out.println("Incorrect input for statement");
 					}else{
 						DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy");
-						bank.getStatement(format.parseDateTime(args[3]), format.parseDateTime(args[4]), Long.parseLong(args[1]));
+						bank.getStatement(Integer.parseInt(args[2]), format.parseDateTime(args[3]), format.parseDateTime(args[4]), Long.parseLong(args[1]));
 					}
 					break;
 				default:
@@ -57,8 +57,8 @@ public class ATMClient
 			}
 			//String target = (args.length == 0) ? "Ireland" : args[0];
 
-			//String capital = cities.getCapital(target);
-			//System.out.println(capital);
+//			String capital = cities.getCapital(target);
+//			System.out.println(capital);
 		}
 		catch (Exception e) {}
 		}

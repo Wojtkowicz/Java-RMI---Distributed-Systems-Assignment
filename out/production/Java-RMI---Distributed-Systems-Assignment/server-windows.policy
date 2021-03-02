@@ -1,0 +1,4 @@
+grant codeBase "file:/C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project" {
+    permission java.security.AllPermission;
+};
+

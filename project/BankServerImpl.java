@@ -59,26 +59,70 @@ public class BankServerImpl implements BankServer
 
   @Override
   public long login(String username, String password) throws RemoteException, InvalidLogin {
-    return 0;
+    Long timestamp = DateTime.now().getMillis();
+    Account userAccount = null;
+
+    for (Account account : accounts) {
+      if (account.getAccountName().equals(username)) {
+        userAccount = account;
+      }
+    }
+
+    if(userAccount != null) {
+      boolean response = userAccount.verifyUser(username, password);
+      if (response) {
+        return timestamp;
+      } else {
+        throw new InvalidLogin();
+      }
+    }
+    else {
+      throw new InvalidLogin();
+    }
+
   }
 
   @Override
   public void deposit(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession {
-
+    Account userAccount = getAccount(accountnum);
+    // TODO Verify session
+    userAccount.depositFunds(amount);
   }
 
   @Override
-  public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession {
-
+  public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession, InsufficientBalance {
+    Account userAccount = getAccount(accountnum);
+    // TODO Verify session
+    if(userAccount.getBalance().isGreaterThan(amount)){
+      userAccount.withdrawFunds(amount);
+    }
+    else{
+      throw new InsufficientBalance();
+    }
   }
 
   @Override
   public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession {
-    return null;
+    Account userAccount = getAccount(accountnum);
+    // TODO Verify session
+    return userAccount.getBalance();
   }
 
   @Override
-  public Statement getStatement(DateTime from, DateTime to, long sessionID) throws RemoteException, InvalidSession {
-    return null;
+  public Statement getStatement(int accountnum, DateTime from, DateTime to, long sessionID) throws RemoteException, InvalidSession {
+    Account userAccount = getAccount(accountnum);
+    // TODO Verify session
+    return new StatementImpl(accountnum, from, to, userAccount);
   }
+
+  private Account getAccount(int accountNum){
+    Account userAccount = null;
+    for (Account account : accounts) {
+      if(accountNum == account.getAccountNumber()){
+        userAccount = account;
+      }
+    }
+    return userAccount;
+  }
+
 }
