@@ -1,14 +1,13 @@
-import org.joda.time.DateTime;
-
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface Statement extends Serializable {
     public int getAccountnum();  // returns account number associated with this statement
 
-    public DateTime getStartDate(); // returns start Date of Statement
+    public LocalDateTime getStartDate(); // returns start Date of Statement
 
-    public DateTime getEndDate(); // returns end Date of Statement
+    public LocalDateTime getEndDate(); // returns end Date of Statement
 
     public String getAccoutName(); // returns name of account holder
     

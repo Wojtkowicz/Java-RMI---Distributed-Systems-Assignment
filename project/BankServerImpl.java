@@ -1,9 +1,9 @@
-import org.joda.money.Money;
-import org.joda.time.DateTime;
-
+import java.math.BigDecimal;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BankServerImpl implements BankServer
@@ -14,23 +14,15 @@ public class BankServerImpl implements BankServer
     super(); 	// call the parent constructor
   }
 
-    private List<Account> accounts; // users accounts
-  // Remote method we are implementing!
- /* public String getCapital(String country) throws RemoteException
-  {
-    System.out.println("Sending return string now - country requested: " + country);
-    if (country.toLowerCase().compareTo("usa") == 0)
-    return "Washington";
-    else if (country.toLowerCase().compareTo("ireland") == 0)
-    return "Dublin";
-    else if (country.toLowerCase().compareTo("france") == 0)
-    return "Paris";
-    return "Don't know that one!";
-  }*/
+  private static List<Account> accounts; // users accounts
 
   // main is required because the server is standalone
   public static void main(String args[])
   {
+    accounts = new ArrayList<>();
+    Account account1 = new Account("Bob_Boberson", "password123", new BigDecimal("3000"), 987654321);
+    accounts.add(account1);
+
     try
     {
       // First reset our Security manager
@@ -59,19 +51,21 @@ public class BankServerImpl implements BankServer
 
   @Override
   public long login(String username, String password) throws RemoteException, InvalidLogin {
-    Long timestamp = DateTime.now().getMillis();
     Account userAccount = null;
 
     for (Account account : accounts) {
       if (account.getAccountName().equals(username)) {
         userAccount = account;
+        System.out.println("located user's account");
       }
     }
 
     if(userAccount != null) {
       boolean response = userAccount.verifyUser(username, password);
       if (response) {
-        return timestamp;
+        System.out.println("generating session ID");
+        long id = userAccount.generateSession();
+        return id;
       } else {
         throw new InvalidLogin();
       }
@@ -83,36 +77,66 @@ public class BankServerImpl implements BankServer
   }
 
   @Override
-  public void deposit(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession {
+  public Boolean deposit(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession {
     Account userAccount = getAccount(accountnum);
-    // TODO Verify session
-    userAccount.depositFunds(amount);
-  }
-
-  @Override
-  public void withdraw(int accountnum, Money amount, long sessionID) throws RemoteException, InvalidSession, InsufficientBalance {
-    Account userAccount = getAccount(accountnum);
-    // TODO Verify session
-    if(userAccount.getBalance().isGreaterThan(amount)){
-      userAccount.withdrawFunds(amount);
-    }
-    else{
-      throw new InsufficientBalance();
+    if(verifySession(accountnum, sessionID)){
+      System.out.println("verified user successfully!");
+      userAccount.depositFunds(amount);
+      System.out.println("Saving transaction ...");
+      Transaction transaction = new Transaction("Deposit", amount, LocalDateTime.now());
+      System.out.println("transaction details: " + transaction.getDescription());
+      userAccount.addTransaction(transaction);
+      return true;
+    }else {
+      System.out.println("Invalid user information");
+      throw new InvalidSession();
     }
   }
 
   @Override
-  public Money getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession {
+  public Boolean withdraw(int accountnum, BigDecimal amount, long sessionID) throws RemoteException, InvalidSession, InsufficientBalance {
     Account userAccount = getAccount(accountnum);
-    // TODO Verify session
-    return userAccount.getBalance();
+    if(verifySession(accountnum, sessionID)){
+      System.out.println("verified user successfully!");
+      if(userAccount.getBalance().compareTo(amount) == 1){
+        userAccount.withdrawFunds(amount);
+        userAccount.addTransaction(new Transaction("Withdraw", amount, LocalDateTime.now()));
+      }
+      else{
+        throw new InsufficientBalance();
+      }
+      return true;
+    }else {
+      System.out.println("Invalid user information");
+      throw new InvalidSession();
+    }
   }
 
   @Override
-  public Statement getStatement(int accountnum, DateTime from, DateTime to, long sessionID) throws RemoteException, InvalidSession {
+  public BigDecimal getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession {
     Account userAccount = getAccount(accountnum);
-    // TODO Verify session
-    return new StatementImpl(accountnum, from, to, userAccount);
+    if(verifySession(accountnum, sessionID)){
+      System.out.println("verified user successfully!");
+      return userAccount.getBalance();
+    }else {
+      System.out.println("Invalid user information");
+      throw new InvalidSession();
+    }
+  }
+
+  @Override
+  public Statement getStatement(int accountnum, LocalDateTime from, LocalDateTime to, long sessionID) throws RemoteException, InvalidSession {
+    Account userAccount = getAccount(accountnum);
+    if(verifySession(accountnum, sessionID)){
+      System.out.println("verified user successfully!");
+      System.out.println("Creating statement ...");
+      Statement statement = new StatementImpl(accountnum, from, to, userAccount);
+      System.out.println(statement.getTransactions().toString());
+      return statement;
+    }else {
+      System.out.println("Invalid user information");
+      throw new InvalidSession();
+    }
   }
 
   private Account getAccount(int accountNum){
@@ -123,6 +147,17 @@ public class BankServerImpl implements BankServer
       }
     }
     return userAccount;
+  }
+
+  private Boolean verifySession(int accountNum, Long sessionId){
+    LocalDateTime currentTimeStamp = LocalDateTime.now();
+
+    System.out.println("current time: " + currentTimeStamp);
+    System.out.println("id time: " + getAccount(accountNum).getSessionIdDate());
+    System.out.println("passed session id " + sessionId);
+    System.out.println("account session id " + getAccount(accountNum).getSessionId());
+
+    return (getAccount(accountNum).getSessionId().equals(sessionId) && currentTimeStamp.isBefore(getAccount(accountNum).getSessionIdDate()));
   }
 
 }

@@ -1,5 +1,4 @@
-import org.joda.time.DateTime;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,18 +7,21 @@ public class StatementImpl implements Statement{
     //account has list of transactions, statement created by bank
     private ArrayList<Transaction> transactions;
     private int accountNumber;
-    private DateTime startDate;
-    private DateTime endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private String accountName;
     private Account accountOfStatement;
 
-    public StatementImpl(int accountNumber, DateTime startTime, DateTime endTime, Account accountDetails){
+    public StatementImpl(int accountNumber, LocalDateTime startTime, LocalDateTime endTime, Account accountDetails){
+        System.out.println("Constructor start...");
         this.accountNumber = accountNumber;
         this.startDate = startTime;
         this.endDate = endTime;
         accountOfStatement = accountDetails;
         accountName = accountDetails.getAccountName();
+        transactions = new ArrayList<>();
         processTransactions();
+        System.out.println("Constructor end ...");
     }
     @Override
     public int getAccountnum() {
@@ -27,12 +29,12 @@ public class StatementImpl implements Statement{
     }
 
     @Override
-    public DateTime getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
     @Override
-    public DateTime getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
