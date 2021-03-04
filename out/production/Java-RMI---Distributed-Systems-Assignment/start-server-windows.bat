@@ -1,2 +1,2 @@
-java -cp C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.rmi.server.codebase=file:/C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.security.debug=access,failure,connect,resolve -Djava.security.policy=server-windows.policy BankServerImpl
+java -cp C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project;"../libs/*" -Djava.rmi.server.codebase=file:/C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.security.debug=access,failure,connect,resolve -Djava.security.policy=server-windows.policy BankServerImpl
 pause

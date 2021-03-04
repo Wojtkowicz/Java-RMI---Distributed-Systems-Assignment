@@ -1,2 +1,2 @@
-java -cp C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.rmi.server.codebase=file:/c:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.security.debug=access,failure,connect,resolve -Djava.security.policy=server-windows.policy  ATMClient
+java -cp C:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.rmi.server.codebase=file:/c:/Users/jakub/Documents/Java-RMI---Distributed-Systems-Assignment/project -Djava.security.debug=access,failure,connect,resolve -Djava.security.policy=server-windows.policy  ATMClient login Bob_Boberson password123
 pause
