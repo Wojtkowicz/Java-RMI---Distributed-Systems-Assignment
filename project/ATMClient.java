@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 import java.rmi.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ATMClient
@@ -15,7 +16,11 @@ public class ATMClient
 						System.out.println("Incorrect input for username and password");
 					}else{
 						System.out.println("Logging in ...");
-						System.out.println("Logged in, session ID: " + bank.login(args[1], args[2]));
+						try {
+							System.out.println("Log in successful!, session ID: " + bank.login(args[1], args[2]) + ", valid for 5 minutes");
+						}catch (Exception e){
+							System.out.println("Login failed!");
+						}
 					}
 					break;
 				case "deposit":
@@ -23,11 +28,11 @@ public class ATMClient
 					if(args[1].length() == 0 || args[2].length() == 0 || args[3].length() == 0){
 						System.out.println("Incorrect input for deposit");
 					}else{
-						System.out.println("Depositing $" + args[3] + " ...");
-						if(bank.deposit(Integer.parseInt(args[2]), new BigDecimal(args[3]), Long.parseLong(args[1]))){
+						System.out.println("Depositing $" + args[3] + " to account " + args[2]);
+						try {
+							bank.deposit(Integer.parseInt(args[2]), new BigDecimal(args[3]), Long.parseLong(args[1]));
 							System.out.println("Deposit Successful!");
-						}
-						else {
+						}catch (Exception e){
 							System.out.println("Deposit failed!");
 						}
 					}
@@ -37,11 +42,11 @@ public class ATMClient
 					if(args[1].length() == 0 || args[2].length() == 0 || args[3].length() == 0){
 						System.out.println("Incorrect input for withdraw");
 					}else{
-						System.out.println("Withdrawing $" + args[3] + " ...");
-						if(bank.withdraw(Integer.parseInt(args[2]), new BigDecimal(args[3]), Long.parseLong(args[1]))){
+						System.out.println("Withdrawing $" + args[3] + " to account " + args[2]);
+						try{
+							bank.withdraw(Integer.parseInt(args[2]), new BigDecimal(args[3]), Long.parseLong(args[1]));
 							System.out.println("Withdraw Successful!");
-						}
-						else{
+						}catch (Exception e){
 							System.out.println("Withdraw failed!");
 						}
 					}
@@ -51,8 +56,12 @@ public class ATMClient
 					if(args[1].length() == 0 || args[2].length() == 0){
 						System.out.println("Incorrect input for balance");
 					}else{
-						System.out.println("Getting balance ... ");
-						System.out.println("Balance: " + bank.getBalance(Integer.parseInt(args[2]), Long.parseLong(args[1])));
+						try {
+							System.out.println("Getting balance for account " + args[2]);
+							System.out.println("Balance: $" + bank.getBalance(Integer.parseInt(args[2]), Long.parseLong(args[1])));
+						}catch (Exception e){
+					        System.out.println("Error getting balance!");
+				}
 					}
 					break;
 				case "statement":
@@ -60,9 +69,22 @@ public class ATMClient
 					if(args[1].length() == 0 || args[2].length() == 0|| args[3].length() == 0|| args[4].length() == 0){
 						System.out.println("Incorrect input for statement");
 					}else{
-						System.out.println("Getting Statement ...");
-						Statement statement = bank.getStatement(Integer.parseInt(args[2]), LocalDateTime.parse(args[3]), LocalDateTime.parse(args[4]), Long.parseLong(args[1]));
-						System.out.println("Statement: " + statement.getTransactions().toString());
+						System.out.println("Getting Statement for account " + args[2]);
+						try {
+							Statement statement = bank.getStatement(Integer.parseInt(args[2]), LocalDate.parse(args[3]), LocalDate.parse(args[4]), Long.parseLong(args[1]));
+							System.out.println("Statement: \n" +
+									"\nAccount holder: " + statement.getAccoutName() +
+									"\nAccount number: " + statement.getAccountnum() +
+									"\nStatement start date: " + statement.getStartDate().toLocalDate() +
+									"\nStatement end date: " + statement.getEndDate().toLocalDate() + "\n"
+							);
+							statement.getTransactions().stream().forEach(t -> {
+								System.out.println(t.toString());
+							});
+
+						}catch (Exception e){
+							System.out.println("Error getting statement!");
+						}
 					}
 					break;
 				default:

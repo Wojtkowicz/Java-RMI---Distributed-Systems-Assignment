@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Account {
+public class Account implements Serializable {
 
     private String userName;
 
@@ -40,11 +41,11 @@ public class Account {
     }
 
     public void depositFunds(BigDecimal amount){
-        balance.add(amount);
+        this.balance = balance.add(amount);
     }
 
     public void withdrawFunds(BigDecimal amount){
-        balance.add(amount);
+        this.balance = balance.subtract(amount);
     }
 
     public BigDecimal getBalance(){

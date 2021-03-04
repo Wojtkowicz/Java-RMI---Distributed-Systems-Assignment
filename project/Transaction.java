@@ -13,7 +13,7 @@ public class Transaction implements Serializable {
         this.transactionType = transactionType;
         this.amount = amount;
         this.date = date;
-        description = date+" "+transactionType+" of amount "+amount;
+        description = date.toLocalDate() +" "+transactionType+" of amount $"+amount;
     }
 
     public BigDecimal getAmount(){

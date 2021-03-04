@@ -2,6 +2,7 @@ import java.math.BigDecimal;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.rmi.registry.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,11 @@ public class BankServerImpl implements BankServer
   {
     accounts = new ArrayList<>();
     Account account1 = new Account("Bob_Boberson", "password123", new BigDecimal("3000"), 987654321);
+    Account account2 = new Account("Tim_Timerson", "password456", new BigDecimal("2000"), 876543219);
+    Account account3 = new Account("Jack_Jackson", "password789", new BigDecimal("1500"), 765432198);
     accounts.add(account1);
+    accounts.add(account2);
+    accounts.add(account3);
 
     try
     {
@@ -125,12 +130,14 @@ public class BankServerImpl implements BankServer
   }
 
   @Override
-  public Statement getStatement(int accountnum, LocalDateTime from, LocalDateTime to, long sessionID) throws RemoteException, InvalidSession {
+  public Statement getStatement(int accountnum, LocalDate from, LocalDate to, long sessionID) throws RemoteException, InvalidSession {
     Account userAccount = getAccount(accountnum);
     if(verifySession(accountnum, sessionID)){
       System.out.println("verified user successfully!");
       System.out.println("Creating statement ...");
-      Statement statement = new StatementImpl(accountnum, from, to, userAccount);
+      LocalDateTime dtFrom = from.atStartOfDay();
+      LocalDateTime dtTo = to.atStartOfDay();
+      Statement statement = new StatementImpl(accountnum, dtFrom, dtTo, userAccount);
       System.out.println(statement.getTransactions().toString());
       return statement;
     }else {

@@ -3,7 +3,7 @@
 
 import java.math.BigDecimal;
 import java.rmi.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public interface BankServer extends Remote
 {
@@ -16,6 +16,6 @@ public interface BankServer extends Remote
   
   public BigDecimal getBalance(int accountnum, long sessionID) throws RemoteException, InvalidSession;
 
-  public Statement getStatement(int accountnum, LocalDateTime from, LocalDateTime to, long sessionID) throws RemoteException, InvalidSession;
+  public Statement getStatement(int accountnum, LocalDate from, LocalDate to, long sessionID) throws RemoteException, InvalidSession;
 
 }
